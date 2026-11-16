@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="cs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Prompt pro váš kontextový soubor</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;600;700&family=Lora:wght@400&display=swap" rel="stylesheet">
+<style>
+:root{--orange:#E5712C;--dark:#202020;--cream:#fdf8f2;--ink:#1a1a1a;--muted:#5a554e;--card:#ffffff;--line:rgba(0,0,0,0.08);}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--cream:#181716;--ink:#f3ede6;--muted:#b9b0a5;--card:#242220;--line:rgba(255,255,255,0.1);}}
+:root[data-theme="dark"]{--cream:#181716;--ink:#f3ede6;--muted:#b9b0a5;--card:#242220;--line:rgba(255,255,255,0.1);}
+*{box-sizing:border-box;margin:0;}
+body{background:var(--cream);color:var(--ink);font-family:"Inter Tight",system-ui,sans-serif;padding:28px 16px 48px;}
+main{max-width:640px;margin:0 auto;}
+.k{font-weight:600;font-size:12px;letter-spacing:0.2em;text-transform:uppercase;color:var(--orange);}
+h1{font-size:30px;line-height:1.1;letter-spacing:-0.03em;margin-top:8px;}
+h1 span{color:var(--orange);}
+p.lead{font-family:Lora,serif;font-size:16px;line-height:1.5;color:var(--muted);margin-top:12px;}
+.btns{display:grid;gap:10px;margin-top:22px;}
+button,a.btn{display:block;width:100%;text-align:center;font:600 16px "Inter Tight",sans-serif;padding:14px 16px;border-radius:12px;
+  border:1px solid var(--line);background:var(--card);color:var(--ink);text-decoration:none;cursor:pointer;}
+button.primary{background:var(--orange);border-color:var(--orange);color:#fff;}
+.prompt{margin-top:22px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;
+  font-family:Lora,serif;font-size:15px;line-height:1.55;white-space:pre-wrap;}
+.note{font-size:13px;line-height:1.5;color:var(--muted);margin-top:16px;}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--dark);color:#fff;padding:10px 16px;
+  border-radius:20px;font-size:14px;opacity:0;transition:opacity .2s;pointer-events:none;}
+.toast.on{opacity:1;}
+footer{margin-top:28px;font-size:12px;color:var(--muted);}
+</style>
+</head>
+<body>
+<main>
+  <div class="k">FSV UK · AI v marketingu</div>
+  <h1>Prompt pro váš kontextový soubor<span>.</span></h1>
+  <p class="lead">Zkopírujte ho do AI a odpovídejte na otázky. Na konci dostanete svůj vlastní kontextový soubor.</p>
+  <div class="btns">
+    <button class="primary" id="copy">Zkopírovat prompt</button>
+    <a class="btn" id="chatgpt" href="#" target="_blank" rel="noopener">Otevřít v ChatGPT</a>
+    <a class="btn" id="claude" href="#" target="_blank" rel="noopener">Otevřít v Claudovi</a>
+    <a class="btn" id="gemini" href="https://gemini.google.com/app" target="_blank" rel="noopener">Otevřít Gemini (prompt se zkopíruje, vložte ho)</a>
+  </div>
+  <div class="prompt" id="text">Chci si vytvořit osobní kontextový soubor pro AI (me.md). Udělej se mnou rozhovor: ptej se vždy jen na jednu otázku a počkej na odpověď. Postupně zjisti:
+1. Role a zázemí: co studuji nebo dělám, obor, v čem jsem silný/á a v čem začátečník/ce.
+2. Aktuální cíle a projekty: na čem teď pracuji a jak vypadá úspěch.
+3. Jak se mnou mluvit: tón, délka, formát (odrážky, nebo souvislý text), co mi vadí.
+4. Nástroje a mantinely: jaké nástroje používám, v jakém jazyce píšu, odkud jsem, jaká mám omezení.
+5. Ukázky: 1 až 2 krátké texty, které jsem napsal/a a líbí se mi.
+Neptej se na hesla, finance ani jiné citlivé údaje.
+Po 10 až 15 otázkách z toho napiš soubor v Markdownu: nadpis pro každý bod výše, stručné odrážky, celkem 500 až 1000 slov. Žádné dlouhé odstavce a žádné jednorázové úkoly. Na konci mi řekni, kam soubor vložit (vlastní instrukce, projekt, nebo začátek chatu).</div>
+  <p class="note">Hotový soubor vložte do vlastních instrukcí (Claude: Settings, Your Claude, Instructions; ChatGPT: Personalization, Custom instructions) nebo do projektu. Nevkládejte do něj hesla ani citlivé údaje.</p>
+  <footer>evisions · AI tým</footer>
+</main>
+<div class="toast" id="toast">Zkopírováno</div>
+<script>
+const PROMPT = "Chci si vytvořit osobní kontextový soubor pro AI (me.md). Udělej se mnou rozhovor: ptej se vždy jen na jednu otázku a počkej na odpověď. Postupně zjisti:\n1. Role a zázemí: co studuji nebo dělám, obor, v čem jsem silný/á a v čem začátečník/ce.\n2. Aktuální cíle a projekty: na čem teď pracuji a jak vypadá úspěch.\n3. Jak se mnou mluvit: tón, délka, formát (odrážky, nebo souvislý text), co mi vadí.\n4. Nástroje a mantinely: jaké nástroje používám, v jakém jazyce píšu, odkud jsem, jaká mám omezení.\n5. Ukázky: 1 až 2 krátké texty, které jsem napsal/a a líbí se mi.\nNeptej se na hesla, finance ani jiné citlivé údaje.\nPo 10 až 15 otázkách z toho napiš soubor v Markdownu: nadpis pro každý bod výše, stručné odrážky, celkem 500 až 1000 slov. Žádné dlouhé odstavce a žádné jednorázové úkoly. Na konci mi řekni, kam soubor vložit (vlastní instrukce, projekt, nebo začátek chatu).";
+const q = encodeURIComponent(PROMPT);
+document.getElementById('chatgpt').href = 'https://chatgpt.com/?q=' + q;
+document.getElementById('claude').href = 'https://claude.ai/new?q=' + q;
+function toast(t){const e=document.getElementById('toast');e.textContent=t;e.classList.add('on');setTimeout(()=>e.classList.remove('on'),1600);}
+async function copy(){
+  try{await navigator.clipboard.writeText(PROMPT);toast('Zkopírováno');}
+  catch(e){const r=document.createRange();r.selectNodeContents(document.getElementById('text'));
+    const s=getSelection();s.removeAllRanges();s.addRange(r);toast('Text je označený, zkopírujte ho');}
+}
+document.getElementById('copy').addEventListener('click',copy);
+document.getElementById('gemini').addEventListener('click',()=>{copy();});
+</script>
+</body>
+</html>
